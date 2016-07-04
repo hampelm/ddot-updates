@@ -298,6 +298,8 @@ app.get('/static-avl/work-trip-map', function (req, response) {
 
 // Get the raw trips we have
 app.get('/static-avl/trips', function(req, response) {
+  console.log(staticData);
+  console.log(staticData.avlTrips);
   response.send(staticData.avlTrips);
 });
 
