@@ -245,6 +245,10 @@ function processExceptions(dayToSequence) {
   csv()
   .from(calendarDatesCSV, {columns: true})
   .on('data', function (data, index) {
+    // We only handle exceptions with a type of "1"
+    // (indicating service has been ADDED for a specific date)
+    // 2 indicates service has been removed for a date. We infer that regular
+    // service has been cancelled on Detroit's exception dates.
     if (data.exception_type === '1') {
       exceptions[data.date] = parseInt(data.service_id, 10);
     }
