@@ -108,6 +108,7 @@ function createWorkTripMap(blockMap, avlWorkBlock, cb) {
 function StaticData() {
   this.tripMap = null;
   this.stopMap = null;
+  this.avlTripsDebug = null;
 
   this.avlTimestamp = 0;
   this.timestamps = {
@@ -168,6 +169,10 @@ StaticData.prototype.createIdMaps = function(cb) {
     console.log('Built new map from AVL trips to GTFS trips.');
 
     createWorkTripMap(blockMap, self.avlBlocks, function (error, map) {
+      // Save AVL trips for debugging
+      // XXX
+      self.avlTripsDebug = self.avlTrips;
+
       // Reset the AVL static trip data
       self.avlTrips = null;
       // Reset the AVL work piece/block data
