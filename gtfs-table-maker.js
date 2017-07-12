@@ -304,6 +304,7 @@ module.exports = (function () {
     // Read in the relevant GTFS data
     var endDate = readGtfsPackage(zipData);
 
+    console.log("Read GTFS Package", endDate, calendarCSV);
     Q.all([
       handleTrips(),
       handleStops(),
