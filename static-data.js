@@ -123,6 +123,7 @@ StaticData.prototype = {};
 
 // Check if we've created all of the necessary data to understand the regular AVL updates
 StaticData.prototype.hasCompleteData = function () {
+  console.log("Checking if we have complete data...");
   // XXX
   if (!this.avlTrips) {
     console.log('Need static trip info.');
@@ -152,7 +153,6 @@ StaticData.prototype.hasCompleteData = function () {
           this.calendar !== null);
 
   console.log("hasCompleteData?", complete);
-
   return complete;
 };
 
