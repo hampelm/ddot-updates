@@ -21,6 +21,7 @@ module.exports = (function () {
     // Each invocation returns the latest map. When the function has been
     // called on all of the data, the map is ready to use.
     return function buildTripMap(avlTripId, startNode, endNode, endTime) {
+      console.log("Building trip map", avlTripId, startNode, endNode, endTime);
       var endNodeMap = startNodeMap[startNode];
       if (endNodeMap === undefined) {
         console.log('AVL Trip ID: ' + avlTripId);
