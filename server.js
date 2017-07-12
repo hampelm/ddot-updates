@@ -255,16 +255,19 @@ app.post('/adherence', function (req, response) {
 });
 
 app.post('/static-avl/blocks', function (req, response) {
+  console.log("Received static-avl/blocks");
   staticData.setAvlBlocks(req.body);
   response.send();
 });
 
 app.post('/static-avl/trips', function (req, response) {
+  console.log("Received static-avl/trips");
   staticData.setAvlTrips(req.body);
   response.send();
 });
 
 app.post('/static-avl/stops', function (req, response) {
+  console.log("Received static-avl/stops");
   staticData.setAvlStops(req.body);
   response.send();
 });

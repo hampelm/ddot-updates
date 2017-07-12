@@ -144,19 +144,24 @@ StaticData.prototype.hasCompleteData = function () {
   }
   // XXX
 
-  return (this.avlStops !== null &&
+  var complete = (this.avlStops !== null &&
           this.avlTrips !== null &&
           this.avlBlocks !== null &&
           this.startNodeMap !== null &&
           this.stopNameMap !== null &&
           this.calendar !== null);
+
+  console.log("hasCompleteData?", complete);
+
+  return complete;
 };
 
 // create tripMap and stopMap
-StaticData.prototype.createIdMaps = function(cb) {
+StaticData.prototype.createIdMaps = function() {
   var self = this;
 
   var tripMapBuilder = converter.getTripMapBuilder(self.startNodeMap);
+  console.log("Using AVL Trips", self.avlTrips)
   createTripMap(tripMapBuilder, self.avlTrips, function (error, tripMap, blockMap) {
 
     if (error) {
