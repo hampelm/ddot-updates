@@ -127,26 +127,33 @@ StaticData.prototype.hasCompleteData = function () {
   // XXX
   if (!this.avlTrips) {
     console.log('Need static trip info.');
+    return false;
   }
   if (!this.startNodeMap) {
     console.log('Need the GTFS start node map.');
+    return false;
   }
   if (!this.stopNameMap) {
     console.log('Need the GTFS stop name map.');
+    return false;
   }
   if (!this.calendar) {
     console.log('Need the GTFS calendar function.');
+    return false;
   }
   if (!this.avlBlocks) {
     console.log('Need the map from work piece ID to block ID');
+    return false;
   }
   if (!this.avlStops) {
     console.log('Need static stop info');
+    return false;
   }
   // XXX
 
-  var complete = (this.avlStops !== null &&
-          this.avlTrips !== null &&
+  // Checking if null doesn't catch undefined. 
+  var complete = (this.avlStops != null &&
+          !this.avlTrips !== null &&
           this.avlBlocks !== null &&
           this.startNodeMap !== null &&
           this.stopNameMap !== null &&
