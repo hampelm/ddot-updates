@@ -118,6 +118,7 @@ function createProtobuf(adherence) {
   var sequence = staticData.calendar(Date.now());
 
   var tripMissCount = 0;
+  var tripMissList = [];
   var workMissCount = 0;
 
   csv()
@@ -178,6 +179,7 @@ function createProtobuf(adherence) {
     if (staticData.tripMap[avlTripId] === undefined) {
       console.log('Could not find AVL Trip ID: ' + avlTripId);
       tripMissCount += 1;
+      tripMissList.push(avlTripId)
     }
 
     // TODO: Why is the trip ID being added as an Array?
@@ -214,7 +216,8 @@ function createProtobuf(adherence) {
     // serialize the message
     serializedFeed = FeedMessage.serialize(feedMessage);
     console.log('Created GTFS-Realtime data from ' + count + ' rows of AVL data.');
-    console.log('Could not resolve ' + tripMissCount + ' AVL trip IDs.');
+    console.log('Could not resolve ' + tripMissCount + ' AVL trip IDs:');
+    console.log(tripMissList);
     console.log('Could not resolve ' + workMissCount + ' AVL work piece IDs.');
   });
 }
