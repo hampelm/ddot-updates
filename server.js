@@ -81,6 +81,7 @@ var serializedFeed = FeedMessage.serialize({
   entity: []
 });
 var tripDelays = {};
+var rawAdherence = '';
 
 var getEntityId = (function () {
   var id = 0;
@@ -247,6 +248,7 @@ app.post('/adherence', function (req, response) {
       staticData.getAvlAge() < MAX_AVL_AGE) {
     console.log('Processing adherence data');
     createProtobuf(req.body);
+    rawAdherence = req.body;
     response.send(JSON.stringify({needsStaticData: false}));
   } else {
     // XXX
