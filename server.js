@@ -234,6 +234,14 @@ app.get('/gtfs-realtime/trip-updates.json', function (req, response) {
   }
 });
 
+app.get('/static-avl/blocks', function(req, response) {
+  response.send(staticData.avlBlocks);
+});
+
+app.get('/adherence', function(req, response) {
+  response.send(rawAdherence);
+});
+
 app.post('/adherence', function (req, response) {
   if (staticData.tripMap && staticData.workTripMap &&
       staticData.getAvlAge() < MAX_AVL_AGE) {
