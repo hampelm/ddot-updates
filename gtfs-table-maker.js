@@ -35,6 +35,7 @@ function processStops(cb) {
   .on('data', function (data, index) {
     if (!data.stop_name) {
       console.log("GTFS: Missing data for a line in stops.txt, skipping", data)
+      return;
     }
     stop_id_name[data.stop_id] = data.stop_name;
   })
