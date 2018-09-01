@@ -33,11 +33,10 @@ function processStops(cb) {
   csv()
   .from(stopsCSV, {columns: true})
   .on('data', function (data, index) {
-    if (data.stop_name) {
-      stop_id_name[data.stop_id] = data.stop_name;
-    } else {
-      console.log("Missing data for a line in stops.txt", data)
+    if (!data.stop_name) {
+      console.log("GTFS: Missing data for a line in stops.txt, skipping", data)
     }
+    stop_id_name[data.stop_id] = data.stop_name;
   })
   .on('end', function (count) {
     cb(stop_id_name);
@@ -54,7 +53,7 @@ function processStopTimes(stop_id_name, cb) {
   .from(stopTimesCSV, {columns: true})
   .on('data', function (data, index) {
     if (!data.trip_id) {
-      console.log("Error in processStopTimes: missing trip id", data);
+      console.log("GTFS: Error in processStopTimes: missing trip id, skipping", data);
       return;
     }
 
@@ -95,6 +94,10 @@ function processServiceIds(trips, cb) {
   csv()
   .from(tripsCSV, {columns: true})
   .on('data', function (data, index) {
+    if (!data.trip_id) {
+      console.log("GTFS: Error in service ids, skipping", data);
+      return;
+    }
     if (trips[data.trip_id] !== undefined) {
       trips[data.trip_id].service_id = data.service_id;
     }
@@ -103,7 +106,7 @@ function processServiceIds(trips, cb) {
     cb(trips);
   })
   .on('error', function (error) {
-    console.log("Error processing service ids", error);
+    console.log("GTFS: Error processing service ids", error);
     throw error;
   });
 }
@@ -179,9 +182,9 @@ function processTrips(trips, cb) {
     }
   }
 
-  console.log('Trip count: ' + tripCount);
-  console.log('Duplicate trip count: ' + dupCount);
-  console.log('Built start node map', Object.keys(startNodeMap));
+  console.log('GTFS: Trip count: ' + tripCount);
+  console.log('GTFS: Duplicate trip count: ' + dupCount);
+  console.log('GTFS: Built start node map', Object.keys(startNodeMap));
 
   cb(startNodeMap);
 }
@@ -205,11 +208,15 @@ function handleStops() {
   var stopNameMap = {};
   var def = Q.defer();
 
-  console.log('Processing stops.');
+  console.log('GTFS: Processing stops.');
 
   csv()
   .from(stopsCSV, {columns: true})
   .on('data', function (data, index) {
+    if (!data.stop_name) {
+      console.log("GTFS: Missing stop name for", data)
+      return
+    }
     stopNameMap[data.stop_name.trim().toLocaleLowerCase()] = data.stop_id;
   })
   .on('end', function (count) {
