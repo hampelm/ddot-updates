@@ -166,6 +166,7 @@ function processTrips(trips, cb) {
 
   console.log('Trip count: ' + tripCount);
   console.log('Duplicate trip count: ' + dupCount);
+  console.log('Build start node map')
 
   cb(startNodeMap);
 }
@@ -315,6 +316,8 @@ module.exports = (function () {
         stopNameMap: stopNameMap,
         calendar: calendar
       });
+    }).catch(function (error0) {
+      console.log("Error making GTFS tables", error);
     });
 
     return endDate;

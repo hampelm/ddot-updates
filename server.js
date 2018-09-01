@@ -261,8 +261,9 @@ app.post('/adherence', function (req, response) {
     if (!staticData.workTripMap) {
       console.log('We have no map from work piece to AVL trips.');
     }
-    // XXX
+    
     // Indicate that we need the static AVL data payload
+    console.log("Telling the AVL server we need static data");
     response.send(JSON.stringify({needsStaticData: true}));
   }
 });
@@ -345,6 +346,7 @@ function startServer() {
     // TODO: use the return value from makeGtfsTables to figure out when to
     // check for new data.
     gtfsProcessor.makeGtfsTables(zipData, function (tables) {
+      console.log("GTFS tables constructed.")
       staticData.setGtfsTables(tables);
     });
   });
