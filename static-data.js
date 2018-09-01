@@ -216,6 +216,7 @@ StaticData.prototype.createIdMaps = function() {
 };
 
 StaticData.prototype.setGtfsTables = function (tables) {
+  console.log("Setting GTFS tables")
   this.startNodeMap = tables.startNodeMap;
   this.stopNameMap = tables.stopNameMap;
   // Calendar is really a function, not a table.

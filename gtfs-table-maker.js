@@ -28,10 +28,14 @@ function convertTimeToSec(time) {
 function processStops(cb) {
   var stop_id_name = {};
 
+  console.log("Processing stops")
+
   csv()
   .from(stopsCSV, {columns: true})
   .on('data', function (data, index) {
-    stop_id_name[data.stop_id] = data.stop_name;
+    if (data.stop_name) {
+      stop_id_name[data.stop_id] = data.stop_name;
+    }
   })
   .on('end', function (count) {
     cb(stop_id_name);
@@ -166,7 +170,7 @@ function processTrips(trips, cb) {
 
   console.log('Trip count: ' + tripCount);
   console.log('Duplicate trip count: ' + dupCount);
-  console.log('Build start node map')
+  console.log('Built start node map', startNodeMap)
 
   cb(startNodeMap);
 }
