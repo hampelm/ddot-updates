@@ -35,12 +35,15 @@ function processStops(cb) {
   .on('data', function (data, index) {
     if (data.stop_name) {
       stop_id_name[data.stop_id] = data.stop_name;
+    } else {
+      console.log("Missing data for a line in stops.txt", data)
     }
   })
   .on('end', function (count) {
     cb(stop_id_name);
   })
   .on('error', function (error) {
+    console.log("Error processing stops", error);
     throw error;
   });
 }
@@ -50,6 +53,11 @@ function processStopTimes(stop_id_name, cb) {
   csv()
   .from(stopTimesCSV, {columns: true})
   .on('data', function (data, index) {
+    if (!data.trip_id) {
+      console.log("Error in processStopTimes: missing trip id", data);
+      return;
+    }
+
     var trip = trips[data.trip_id];
     var stopSeq = parseInt(data.stop_sequence, 10);
     if (trip === undefined) {
@@ -77,6 +85,7 @@ function processStopTimes(stop_id_name, cb) {
     cb(trips);
   })
   .on('error', function (error) {
+    console.log("Error processing stop times", error);
     throw error;
   });
 }
@@ -94,6 +103,7 @@ function processServiceIds(trips, cb) {
     cb(trips);
   })
   .on('error', function (error) {
+    console.log("Error processing service ids", error);
     throw error;
   });
 }
@@ -111,6 +121,7 @@ function processBlockIds(trips, cb) {
     cb(trips);
   })
   .on('error', function (error) {
+    console.log("Error processing block ids", error);
     throw error;
   });
 }
@@ -170,7 +181,7 @@ function processTrips(trips, cb) {
 
   console.log('Trip count: ' + tripCount);
   console.log('Duplicate trip count: ' + dupCount);
-  console.log('Built start node map', startNodeMap)
+  console.log('Built start node map', Object.keys(startNodeMap));
 
   cb(startNodeMap);
 }
@@ -315,12 +326,13 @@ module.exports = (function () {
       handleStops(),
       handleCalendar()
     ]).spread(function (startNodeMap, stopNameMap, calendar) {
+      console.log("All GTFS parsing succeeded")
       cb({
         startNodeMap: startNodeMap,
         stopNameMap: stopNameMap,
         calendar: calendar
       });
-    }).catch(function (error0) {
+    }).catch(function (error) {
       console.log("Error making GTFS tables", error);
     });
 
