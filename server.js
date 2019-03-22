@@ -4,6 +4,7 @@ var csv = require('csv');
 var express = require('express');
 var fs = require('fs');
 var http = require('http');
+var protobuf = require("protobufjs");
 var request = require('request');
 var tz = require('timezone/loaded');
 var util = require('util');
@@ -214,7 +215,7 @@ function createProtobuf(adherence) {
     }
 
 
-    protobuf.load("awesome.proto", function(err, root) {
+    protobuf.load("gtfs-realtime.proto", function(err, root) {
       // serialize the message XXX this is how we used to do it
       // serializedFeed = FeedMessage.serialize(feedMessage);
 
@@ -222,10 +223,9 @@ function createProtobuf(adherence) {
       FeedMessage = root.lookupType("transit_realtime.FeedMessage");
 
       // Create a new message
-      var message = FeedMessage.create(feedMessage); // or use .fromObject if conversion is necessary
+      var message = FeedMessage.fromObject(feedMessage); // or use .fromObject if conversion is necessary
       serializedFeed = FeedMessage.encode(message).finish();
     });
-
 
     console.log('Created GTFS-Realtime data from ' + count + ' rows of AVL data.');
     console.log('Could not resolve ' + tripMissCount + ' AVL trip IDs:');
