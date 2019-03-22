@@ -1,15 +1,15 @@
 /*jslint node: true, indent: 2, sloppy: true, white: true, vars: true */
 
-var fs = require('fs');
 var csv = require('csv');
 var express = require('express');
-var Schema = require('protobuf').Schema;
-var StaticData = require('./static-data.js').StaticData;
-var gtfsProcessor = require('./gtfs-table-maker.js');
+var fs = require('fs');
+var http = require('http');
 var request = require('request');
 var tz = require('timezone/loaded');
 var util = require('util');
-var http = require('http');
+
+var StaticData = require('./static-data.js').StaticData;
+var gtfsProcessor = require('./gtfs-table-maker.js');
 
 // Determines if we enable an HTML site for testing the data.
 var useTestSite = process.env.TEST_SITE;
@@ -19,11 +19,12 @@ var staticData = new StaticData();
 var app = express();
 var server = http.createServer(app);
 
-
 var MAX_AVL_AGE = 24*60*60*1000;
 
+var FeedMessage;
+
 app.use(express.logger());
-//express.bodyParser.parse['text/plain'] = function (req, options, callback) {
+
 function textParser(req, res, next) {
   if (req._body) { return next(); }
   req.body = req.body || {};
@@ -68,18 +69,15 @@ app.configure(function () {
   app.use(express.bodyParser());
 });
 
+// var serializedFeed = FeedMessage.serialize({
+//   header: {
+//     gtfsRealtimeVersion: 1,
+//     incrementality: 2,
+//     timestamp: Date.now()
+//   },
+//   entity: []
+// });
 
-var schema = new Schema(fs.readFileSync('gtfs-realtime.desc'));
-var FeedMessage = schema['transit_realtime.FeedMessage'];
-
-var serializedFeed = FeedMessage.serialize({
-  header: {
-    gtfsRealtimeVersion: 1,
-    incrementality: 2,
-    timestamp: Date.now()
-  },
-  entity: []
-});
 var tripDelays = {};
 var rawAdherence = '';
 
@@ -214,8 +212,21 @@ function createProtobuf(adherence) {
         });
       }
     }
-    // serialize the message
-    serializedFeed = FeedMessage.serialize(feedMessage);
+
+
+    protobuf.load("awesome.proto", function(err, root) {
+      // serialize the message XXX this is how we used to do it
+      // serializedFeed = FeedMessage.serialize(feedMessage);
+
+      // Obtain a message type
+      FeedMessage = root.lookupType("transit_realtime.FeedMessage");
+
+      // Create a new message
+      var message = FeedMessage.create(feedMessage); // or use .fromObject if conversion is necessary
+      serializedFeed = FeedMessage.encode(message).finish();
+    });
+
+
     console.log('Created GTFS-Realtime data from ' + count + ' rows of AVL data.');
     console.log('Could not resolve ' + tripMissCount + ' AVL trip IDs:');
     console.log(tripMissList);
@@ -228,8 +239,8 @@ app.get('/gtfs-realtime/trip-updates', function (req, response) {
 });
 
 app.get('/gtfs-realtime/trip-updates.json', function (req, response) {
-  if (serializedFeed) {
-    response.send(FeedMessage.parse(new Buffer(serializedFeed)));
+  if (serializedFeed && FeedMessage) {
+    response.send(FeedMessage.decode(new Buffer(serializedFeed)));
   } else {
     response.send();
   }

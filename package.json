@@ -1,17 +1,17 @@
 {
   "name": "ddottest",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "engines": {
-    "node": "0.10.x"
+    "node": "10.x"
   },
   "dependencies": {
     "express": "~3.0.0",
     "csv": "0.0.x",
-    "protobuf": "~0.8.0",
+    "protobufjs": "6.8.x",
     "zip": "~1.1.0",
     "timezone": "~0.0.21",
     "q": "0.8.x",
-    "request": "~2.21.0"
+    "request": "2.x"
   }
 }
