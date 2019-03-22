@@ -1,6 +1,6 @@
 {
-  "name": "ddottest",
-  "version": "1.0.0",
+  "name": "ddot-updates",
+  "version": "2.0.0",
   "private": true,
   "engines": {
     "node": "10.x"
@@ -9,7 +9,7 @@
     "express": "~3.0.0",
     "csv": "0.0.x",
     "protobufjs": "6.8.x",
-    "zip": "~1.1.0",
+    "zip": "1.2.0",
     "timezone": "~0.0.21",
     "q": "0.8.x",
     "request": "2.x"
