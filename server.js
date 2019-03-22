@@ -319,6 +319,12 @@ app.get('/static-avl/trips', function(req, response) {
   response.send(staticData.avlTripsDebug);
 });
 
+// Get the raw trips we have
+app.get('/static-avl/trip-map', function(req, response) {
+  console.log("AVL Trips", staticData.tripMap);
+  response.send(staticData.tripMap);
+});
+
 
 // Respond with the sequence ID/service ID
 app.get('/test/sequence', function (req, response) {
