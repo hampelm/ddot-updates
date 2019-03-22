@@ -70,14 +70,35 @@ app.configure(function () {
   app.use(express.bodyParser());
 });
 
-// var serializedFeed = FeedMessage.serialize({
-//   header: {
-//     gtfsRealtimeVersion: 1,
-//     incrementality: 2,
-//     timestamp: Date.now()
-//   },
-//   entity: []
-// });
+// Set up some empty GTFS to start with
+var serializedFeed;
+var FeedMessage;
+
+var dummyGtfs = {
+  header: {
+    gtfsRealtimeVersion: 1,
+    incrementality: 2,
+    timestamp: Date.now()
+  },
+  entity: []
+};
+
+protobuf.load("gtfs-realtime.proto", function(error, root) {
+  if (error) {
+    console.log("Error loading gtfs-realtime protobuf definition", error);
+    return
+  }
+
+  // Obtain a message type
+  FeedMessage = root.lookupType("transit_realtime.FeedMessage");
+
+  // Create a new dummy message
+  var message = FeedMessage.fromObject(dummyGtfs); // or use .fromObject if conversion is necessary
+  serializedFeed = FeedMessage.encode(message).finish();
+  console.log("Created empty GTFS-RT data as a placeholder")
+});
+
+
 
 var tripDelays = {};
 var rawAdherence = '';
@@ -214,18 +235,12 @@ function createProtobuf(adherence) {
       }
     }
 
-
-    protobuf.load("gtfs-realtime.proto", function(err, root) {
-      // serialize the message XXX this is how we used to do it
-      // serializedFeed = FeedMessage.serialize(feedMessage);
-
-      // Obtain a message type
-      FeedMessage = root.lookupType("transit_realtime.FeedMessage");
-
-      // Create a new message
-      var message = FeedMessage.fromObject(feedMessage); // or use .fromObject if conversion is necessary
+    if (FeedMessage) {
+      var message = FeedMessage.fromObject(dummyGtfs); // or use .fromObject if conversion is necessary
       serializedFeed = FeedMessage.encode(message).finish();
-    });
+    } else {
+      console.error("Error: no FeedMessage -- was the protobuf definition loaded OK?")
+    }
 
     console.log('Created GTFS-Realtime data from ' + count + ' rows of AVL data.');
     console.log('Could not resolve ' + tripMissCount + ' AVL trip IDs:');
@@ -297,11 +312,6 @@ app.post('/static-avl/stops', function (req, response) {
   response.send();
 });
 
-app.post('/fake-realtime', function (req, response) {
-  serializedFeed = FeedMessage.serialize(req.body);
-  console.log('Using fake GTFS-Realtime data');
-  response.send();
-});
 
 app.post('/post-test', function (req, response) {
   console.log('Got a post with req.body.length = ' + req.body.length);
