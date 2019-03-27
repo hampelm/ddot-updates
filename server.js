@@ -201,6 +201,7 @@ function createProtobuf(adherence) {
       console.log('Could not find AVL Trip ID: ' + avlTripId);
       tripMissCount += 1;
       tripMissList.push(avlTripId)
+      return;
     }
 
     // TODO: Why is the trip ID being added as an Array?
