@@ -20,6 +20,10 @@ var staticData = new StaticData();
 var app = express();
 var server = http.createServer(app);
 
+var posixTimestamp = function() {
+  return Math.round(new Date().getTime() / 1000);
+};
+
 var MAX_AVL_AGE = 24 * 60 * 60 * 1000;
 
 var FeedMessage;
@@ -82,9 +86,9 @@ var FeedMessage;
 
 var dummyGtfs = {
   header: {
-    gtfsRealtimeVersion: 1,
+    gtfsRealtimeVersion: "1.0",
     incrementality: 2,
-    timestamp: Date.now()
+    timestamp: posixTimestamp()
   },
   entity: []
 };
@@ -138,7 +142,7 @@ function createProtobuf(adherence) {
     header: {
       gtfsRealtimeVersion: 1,
       incrementality: 2,
-      timestamp: Date.now()
+      timestamp: posixTimestamp()
     },
     entity: []
   };
@@ -173,11 +177,11 @@ function createProtobuf(adherence) {
         return;
       }
 
-      var posixTime = tz(timestamp);
+      var posixTimestamp = tz(timestamp);
       var messageTime =
-        3600 * parseInt(tz(posixTime, "%H", "America/Detroit"), 10) +
-        60 * parseInt(tz(posixTime, "%M", "America/Detroit"), 10) +
-        parseInt(tz(posixTime, "%S", "America/Detroit"), 10);
+        3600 * parseInt(tz(posixTimestamp, "%H", "America/Detroit"), 10) +
+        60 * parseInt(tz(posixTimestamp, "%M", "America/Detroit"), 10) +
+        parseInt(tz(posixTimestamp, "%S", "America/Detroit"), 10);
 
       // Look for the current trip. It's the one that ends the soonest, _after_
       // the message timestamp.
